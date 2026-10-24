@@ -24,20 +24,13 @@ jobs:
         with:
           targets: x86_64-pc-windows-msvc
 
-      - name: Install frontend dependencies
-        working-directory: ui
-        run: npm install
-
       - name: Build Tauri application
-        run: |
-          cd src-tauri
-          cargo install tauri-cli --version "^2" --locked
-          cargo tauri build --target x86_64-pc-windows-msvc
-        shell: pwsh
+        working-directory: src-tauri
+        run: cargo build --release --target x86_64-pc-windows-msvc
 
-      - name: Upload Windows build
+      - name: Upload Windows executable
         uses: actions/upload-artifact@v4
         with:
           name: JackBrowser-Windows-x64
-          path: src-tauri/target/x86_64-pc-windows-msvc/release/*.exe
+          path: src-tauri/target/x86_64-pc-windows-msvc/release/lite_browser.exe
           if-no-files-found: error
