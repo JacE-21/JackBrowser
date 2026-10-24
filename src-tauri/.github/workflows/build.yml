@@ -1,0 +1,43 @@
+
+name: Build portable binaries
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  build-windows:
+    name: Build Windows portable executable
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-msvc
+
+      - name: Install frontend dependencies
+        working-directory: ui
+        run: npm install
+
+      - name: Build Tauri application
+        run: |
+          cd src-tauri
+          cargo install tauri-cli --version "^2" --locked
+          cargo tauri build --target x86_64-pc-windows-msvc
+        shell: pwsh
+
+      - name: Upload Windows build
+        uses: actions/upload-artifact@v4
+        with:
+          name: JackBrowser-Windows-x64
+          path: src-tauri/target/x86_64-pc-windows-msvc/release/*.exe
+          if-no-files-found: error
