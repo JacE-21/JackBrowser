@@ -24,6 +24,12 @@ jobs:
         with:
           targets: x86_64-pc-windows-msvc
 
+      - name: Install Windows build dependencies
+        run: |
+          rustc --version
+          cargo --version
+        shell: pwsh
+
       - name: Build Tauri application
         working-directory: src-tauri
         run: cargo build --release --target x86_64-pc-windows-msvc
